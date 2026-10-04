@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College FAQ System - Student QA Assistant</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>College QA Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-btn active"><i class="fa-solid fa-comments"></i> <span>Student Chat</span></a>
+      <a href="/admin" class="nav-btn"><i class="fa-solid fa-user-shield"></i> <span>Admin Portal</span></a>
+      <button class="theme-toggle-btn" id="themeToggle">
+        <i class="fa-solid fa-moon"></i> Dark Mode
+      </button>
+    </div>
+  </nav>
+
+  <!-- Application Main Container -->
+  <main class="app-container">
+    <div class="chat-layout">
+      
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-title">
+          <h2>College Information Assistant</h2>
+          <p>NLP-powered instant answers for campus questions</p>
+        </div>
+        <div class="status-badge">
+          <span class="status-dot"></span> AI Knowledge Base Active (36 FAQs)
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-bar" id="categoryPills">
+        <button class="category-pill active" data-id="all"><i class="fa-solid fa-layer-group"></i> All Categories</button>
+      </div>
+
+      <!-- Suggested Questions Bar -->
+      <div class="suggestions-bar">
+        <div class="suggestions-title"><i class="fa-solid fa-lightbulb"></i> Suggested Questions</div>
+        <div class="suggestions-chips" id="suggestionsChips">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div class="chat-messages" id="chatMessages">
+        <!-- Initial Welcome Message -->
+        <div class="message-group bot-group">
+          <div class="avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
+          <div class="message-content">
+            <div class="message-bubble">
+              Hello! I am your <strong>College FAQ Assistant</strong>. Ask me anything regarding Admissions, Examination, Attendance, Fees, Hostel, Library, Placements, or Campus facilities!
+            </div>
+            <div class="message-meta">
+              <span class="status-badge"><span class="status-dot"></span> Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input Form -->
+      <div class="chat-input-area">
+        <form class="chat-form" id="chatForm">
+          <button type="button" class="clear-btn" id="clearChatBtn" title="Clear Chat History">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <div class="input-wrapper">
+            <input type="text" id="userQueryInput" class="chat-input" placeholder="Type your college query here (e.g. What is the minimum attendance requirement?)" autocomplete="off" required>
+          </div>
+          <button type="submit" class="send-btn" title="Send Question">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Client JS Script -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

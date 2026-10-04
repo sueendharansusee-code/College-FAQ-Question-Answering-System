@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - College FAQ System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="/" class="brand">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>College QA Hub</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-btn"><i class="fa-solid fa-comments"></i> <span>Student Chat</span></a>
+      <a href="/admin" class="nav-btn active"><i class="fa-solid fa-user-shield"></i> <span>Admin Portal</span></a>
+      <button class="theme-toggle-btn" id="themeToggle">
+        <i class="fa-solid fa-moon"></i> Dark Mode
+      </button>
+    </div>
+  </nav>
+
+  <!-- Application Main Container -->
+  <main class="app-container">
+    
+    <div class="admin-header">
+      <div>
+        <h1>Knowledge Base Administration</h1>
+        <p style="color: var(--text-muted);">Manage FAQs, inspect student queries, and test TF-IDF similarity vectors</p>
+      </div>
+      <button class="btn-primary" id="openAddFaqModalBtn">
+        <i class="fa-solid fa-plus"></i> Add New FAQ
+      </button>
+    </div>
+
+    <!-- Stats KPI Summary Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-database"></i></div>
+        <div class="stat-info">
+          <h3 id="totalFaqsCount">0</h3>
+          <p>Indexed FAQs</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-headset"></i></div>
+        <div class="stat-info">
+          <h3 id="totalQueriesCount">0</h3>
+          <p>Total Student Queries</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+        <div class="stat-info">
+          <h3 id="resolutionRate">0%</h3>
+          <p>Resolution Rate</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-folder-tree"></i></div>
+        <div class="stat-info">
+          <h3 id="totalCategoriesCount">0</h3>
+          <p>FAQ Categories</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Tabs -->
+    <div class="section-tabs">
+      <button class="tab-btn active" data-target="faqsPanel"><i class="fa-solid fa-list-check"></i> FAQ Management</button>
+      <button class="tab-btn" data-target="historyPanel"><i class="fa-solid fa-clock-rotate-left"></i> Student Query History</button>
+      <button class="tab-btn" data-target="sandboxPanel"><i class="fa-solid fa-flask"></i> NLP Vector Sandbox</button>
+    </div>
+
+    <!-- PANEL 1: FAQ Management -->
+    <div class="tab-panel" id="faqsPanel" style="display: block;">
+      <div class="card-panel">
+        <div class="panel-header">
+          <h3>Manage FAQ Directory</h3>
+          <div class="search-filter-bar">
+            <input type="text" id="faqSearchInput" class="form-control" placeholder="Search FAQs by keyword...">
+            <select id="faqCategoryFilter" class="form-control">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Question</th>
+                <th>Answer Preview</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="faqsTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: Query History Log -->
+    <div class="tab-panel" id="historyPanel" style="display: none;">
+      <div class="card-panel">
+        <div class="panel-header">
+          <h3>Recent Query Log & Performance</h3>
+          <div class="search-filter-bar">
+            <select id="historyStatusFilter" class="form-control">
+              <option value="">All Statuses</option>
+              <option value="ANSWERED">Answered (Valid Match)</option>
+              <option value="UNANSWERED">Unanswered (Below Threshold)</option>
+            </select>
+            <button class="btn-danger" id="clearHistoryBtn"><i class="fa-solid fa-trash"></i> Clear Logs</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Student Query</th>
+                <th>Matched FAQ Question</th>
+                <th>Similarity Score</th>
+                <th>Category</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: NLP Similarity Sandbox -->
+    <div class="tab-panel" id="sandboxPanel" style="display: none;">
+      <div class="card-panel">
+        <div class="panel-header">
+          <h3>Live Cosine Similarity Vector Sandbox</h3>
+        </div>
+        <p style="margin-bottom:1.25rem; color:var(--text-muted); font-size:0.9rem;">
+          Enter any query below to inspect raw TF-IDF vectorization tokens and view rank-ordered cosine similarity scores against all stored FAQs.
+        </p>
+
+        <form id="sandboxForm" style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+          <input type="text" id="sandboxQueryInput" class="form-control" style="flex:1;" placeholder="Enter custom query to test (e.g. How to get hostel leave?)" required>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-play"></i> Test Vectorization</button>
+        </form>
+
+        <div id="sandboxResults">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ADD / EDIT FAQ MODAL -->
+  <div class="modal-overlay" id="faqModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="faqModalTitle">Add New FAQ</h3>
+        <button class="close-modal" id="closeModalBtn">&times;</button>
+      </div>
+
+      <form id="faqForm">
+        <input type="hidden" id="faqIdInput">
+
+        <div class="form-group">
+          <label for="faqCategorySelect">Category</label>
+          <select id="faqCategorySelect" class="form-control" required>
+            <option value="">Select Category...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="faqQuestionInput">Question</label>
+          <input type="text" id="faqQuestionInput" class="form-control" placeholder="e.g. What is the deadline for tuition fee payment?" required>
+        </div>
+
+        <div class="form-group">
+          <label for="faqAnswerInput">Answer</label>
+          <textarea id="faqAnswerInput" class="form-control" placeholder="Provide complete, accurate answer details..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="faqKeywordsInput">Keywords (Optional - Enhances NLP Vector Matching)</label>
+          <input type="text" id="faqKeywordsInput" class="form-control" placeholder="e.g. fee payment tuition deadline sbi collect late fine">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="cancelFaqBtn">Cancel</button>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save FAQ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin JS Script -->
+  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
